@@ -39,9 +39,11 @@ class CalcViewController: UIViewController {
     @IBOutlet weak var decimalButton: UIButton!
     
     // MARK: - Color Themes
-    var currentTheme: CalculatorTheme{
-        return CalculatorTheme(backgroundColor: "#000000", displayColor: "#FFFFFF", extraFunctionColor: "#a6a6a6", extraFunctionTitleColor: "#FFFFFF", operationColor: "#ff9f0a", operationTitleColor: "#FFFFFF", pinpadColor: "#333333", pinpadTitleColor: "#FFFFFF")
+    private var currentTheme: CalculatorTheme{
+        return purpleTheme
     }
+    
+    
     
     // MARK: - Calculator Engine
     private var calculatorEngine = CalculatorEngine()
