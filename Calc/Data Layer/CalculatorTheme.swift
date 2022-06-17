@@ -8,7 +8,14 @@
 import Foundation
 
 
-struct CalculatorTheme{
+enum StatusBarStyle: Codable {
+    case light
+    case dark
+    
+}
+
+struct CalculatorTheme: Codable{
+    let id: String
     
     let backgroundColor: String
     let displayColor: String
@@ -18,8 +25,14 @@ struct CalculatorTheme{
     
     let operationColor: String
     let operationTitleColor: String
+    let operationSelectedColor: String
+    let operationTitleSelectedColor: String
     
     let pinpadColor: String
     let pinpadTitleColor: String
+    
+    let statusBarStyle: StatusBarStyle
+    
+
     
 }

@@ -1,28 +1,31 @@
 //
-//  CalcViewController.swift
+//  MathEquation.swift
 //  Calc
 //
 //  Created by zani on 16/06/22.
 //
 
-
 import Foundation
 
 
-extension CalcViewController {
+extension ThemeManager {
     
     var darkTheme: CalculatorTheme {
-        return CalculatorTheme(
+        return CalculatorTheme(id:          "1",
             backgroundColor:                "#000000",
-            displayColor:                   "#FFFFFF",
+            displayColor:                   "#ffffff",
                                
             extraFunctionColor:             "#a6a6a6",
             extraFunctionTitleColor:        "#000000",
                                
             operationColor:                 "#ff9f0a",
-            operationTitleColor:            "#FFFFFF",
+            operationTitleColor:            "#ffffff",
+            operationSelectedColor:         "#ffffff",
+            operationTitleSelectedColor:    "#ff9f0a",
                                
             pinpadColor:                    "#333333",
-            pinpadTitleColor:               "#FFFFFF")
+            pinpadTitleColor:               "#ffffff",
+                               
+            statusBarStyle:                 .light)
     }
 }

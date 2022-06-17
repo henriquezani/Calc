@@ -12,8 +12,7 @@ import UIKit
 class CalcViewController: UIViewController {
     
     // MARK: - IBOutlets
-    @IBOutlet weak var lcdDisplay: UIView!
-    @IBOutlet weak var displayLabel: UILabel!
+    @IBOutlet weak var lcdDisplay: LCDDisplay!
     
     @IBOutlet weak var pinpadButton0: UIButton!
     @IBOutlet weak var pinpadButton1: UIButton!
@@ -40,7 +39,7 @@ class CalcViewController: UIViewController {
     
     // MARK: - Color Themes
     private var currentTheme: CalculatorTheme{
-        return purpleTheme
+        return ThemeManager.shared.currentTheme
     }
     
     
@@ -51,20 +50,44 @@ class CalcViewController: UIViewController {
     // MARK: - Life Cycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        decorateView()
+        addThemeGestureRecongniser()
+        redecorateView()
+    }
+    
+    // MARK: - Gestrues
+    
+    private func addThemeGestureRecongniser(){
+        let themeGestureRecongniser = UITapGestureRecognizer(target: self, action: #selector(self.themeGestureRocogniserDidTap(_:)))
+        themeGestureRecongniser.numberOfTapsRequired = 2
+        lcdDisplay.addGestureRecognizer(themeGestureRecongniser)
+    }
+    
+    @objc private func themeGestureRocogniserDidTap(_ gesture: UITapGestureRecognizer){
+        decorateViewWithNextTheme()
     }
     
     // MARK: - Decorate
     
-    private func decorateView(){
-       
-        
+    private func decorateViewWithNextTheme(){
+        ThemeManager.shared.moveToNextTheme()
+        redecorateView()
+    }
+    
+    private func redecorateView(){
         view.backgroundColor = UIColor(hex: currentTheme.backgroundColor)
         lcdDisplay.backgroundColor = .clear
-        displayLabel.textColor = UIColor(hex: currentTheme.displayColor)
+        lcdDisplay.label.textColor = UIColor(hex: currentTheme.displayColor)
         
+        setNeedsStatusBarAppearanceUpdate()
         
         decorateButton()
+    }
+    
+    override var preferredStatusBarStyle: UIStatusBarStyle {
+        switch currentTheme.statusBarStyle {
+        case .light: return .lightContent
+        case .dark: return .darkContent
+        }
     }
     
     private func decorateButton(){
@@ -105,7 +128,7 @@ class CalcViewController: UIViewController {
         
         button.tintColor = UIColor(hex:currentTheme.extraFunctionColor)
         button.setTitleColor(UIColor(hex:currentTheme.extraFunctionTitleColor), for: .normal)
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 40)
+        button.titleLabel?.font = UIFont.systemFont(ofSize: 30)
     }
     
     private func decorateOperaitonButton(_ button: UIButton){
@@ -114,6 +137,7 @@ class CalcViewController: UIViewController {
                 
         button.tintColor = UIColor(hex:currentTheme.operationColor)
         button.setTitleColor(UIColor(hex:currentTheme.operationTitleColor), for: .normal)
+        button.setTitleColor(UIColor(hex:currentTheme.operationTitleSelectedColor), for: .selected)
         button.titleLabel?.font = UIFont.systemFont(ofSize: 50)
     }
     private func decoratePinpadButton(_ button: UIButton, _ usingSlicedImage: Bool = false){
@@ -123,7 +147,22 @@ class CalcViewController: UIViewController {
         
         button.tintColor = UIColor(hex:currentTheme.pinpadColor)
         button.setTitleColor(UIColor(hex:currentTheme.pinpadTitleColor), for: .normal)
+        
         button.titleLabel?.font = UIFont.systemFont(ofSize: 30)
+    }
+    
+    // MARK: - Select Operation Buttons
+    
+    private func deselectOperationButtons(){
+        selectOperationButton(divideButton, false)
+        selectOperationButton(multiplyButton, false)
+        selectOperationButton(minusButton, false)
+        selectOperationButton(addButton, false)
+    }
+    
+    private func selectOperationButton(_ button: UIButton, _ selected: Bool){
+        button.tintColor = selected ? UIColor(hex: currentTheme.operationSelectedColor): UIColor(hex: currentTheme.operationColor)
+        button.isSelected = selected
     }
 
 
@@ -131,6 +170,9 @@ class CalcViewController: UIViewController {
     // MARK: - IBActions
     
     @IBAction private func clearPressed() {
+        deselectOperationButtons()
+        
+        
         calculatorEngine.clearPressed()
         refreshLCDDisplay()
     }
@@ -148,26 +190,40 @@ class CalcViewController: UIViewController {
     // MARK: - Operations
     
     @IBAction private func addPressed() {
+        deselectOperationButtons()
+        selectOperationButton(addButton, true)
+        
         calculatorEngine.addPressed()
         refreshLCDDisplay()
     }
     
     @IBAction private func minusPressed() {
+        deselectOperationButtons()
+        selectOperationButton(minusButton, true)
+        
         calculatorEngine.minusPressed()
         refreshLCDDisplay()
     }
     
     @IBAction private func multiplyPressed() {
+        deselectOperationButtons()
+        selectOperationButton(multiplyButton, true)
+        
         calculatorEngine.multiplyPressed()
         refreshLCDDisplay()
     }
     
     @IBAction private func dividePressed() {
+        deselectOperationButtons()
+        selectOperationButton(divideButton, true)
+        
         calculatorEngine.dividePressed()
         refreshLCDDisplay()
     }
     
     @IBAction private func equalsPressed() {
+        deselectOperationButtons()
+        
         calculatorEngine.equalsPressed()
         refreshLCDDisplay()
     }
@@ -175,11 +231,15 @@ class CalcViewController: UIViewController {
     // MARK: - Number Input
     
     @IBAction private func decimalPressed() {
+        deselectOperationButtons()
+        
         calculatorEngine.decimalPressed()
         refreshLCDDisplay()
     }
     
     @IBAction private func numberPressed(_ sender: UIButton) {
+        deselectOperationButtons()
+        
         let number = sender.tag
         calculatorEngine.numberPressed(number)
         refreshLCDDisplay()
@@ -189,7 +249,7 @@ class CalcViewController: UIViewController {
     // MARK: - Refresh LCDDisplay
     
     private func refreshLCDDisplay(){
-        displayLabel.text = calculatorEngine.lcdDisplayText
+        lcdDisplay.label.text = calculatorEngine.lcdDisplayText
     }
 }
 
