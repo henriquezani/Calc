@@ -1,4 +1,4 @@
-# Calculator App
+# Calculator App IOS
 
 <div align="center">
   <img alt="Logo" src="assets/Logo.png"  width="150px" />
@@ -14,6 +14,7 @@ Calculator with a professional design, customizable and with several functions u
  
  ## Technologies used 🛠️ 
 
+- Swift
 - UIKit
 - Storyboard
 - Auto Layout
